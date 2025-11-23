@@ -692,8 +692,14 @@ def process_invoice():
 
         def run(playwright: Playwright) -> None:
             browser = playwright.chromium.launch(
-                headless=False,
-                args=["--window-position=-2000,0"]
+                headless=True,  # 改成 True！！
+                args=[
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu",
+                    "--single-process"
+                ]
             )
             context = browser.new_context()
             page = context.new_page()
