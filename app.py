@@ -837,5 +837,14 @@ def export_transactions():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
+@app.route('/')
+def health_check():
+    return jsonify({"status": "healthy", "message": "Flask server is running!"}), 200
+
+@app.route('/health')
+def health():
+    return "OK", 200
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Render 會用 gunicorn 啟動，不會走這行，但本地測試會用到
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)), debug=False)
