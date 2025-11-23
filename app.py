@@ -17,6 +17,8 @@ from flask import Flask, request, jsonify
 import requests
 import pytz
 from groq import Groq
+from google.oauth2 import service_account
+import json
 
 model="openai/gpt-oss-120b"
 
@@ -28,6 +30,18 @@ cred = credentials.Certificate('serviceAccountKey.json')
 firebase_admin.initialize_app(cred)
 taipei = pytz.timezone('Asia/Taipei')
 db = firestore.client()
+
+if os.path.exists('serviceAccountKey.json'):
+    cred = credentials.Certificate('serviceAccountKey.json')
+else:
+    # Render 環境：用環境變數提供的 JSON 字串
+    google_credentials = os.getenv('SERVICE_ACCOUNT_KEY_JSON')
+    if google_credentials:
+        cred = service_account.Credentials.from_service_account_info(
+            json.loads(google_credentials)
+        )
+    else:
+        raise ValueError("無法找到 Firebase 金鑰！")
 
 # 密碼長度驗證
 def is_valid_password(password):
